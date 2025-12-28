@@ -92,7 +92,7 @@
     <div class="card">
       <div class="label">Nồng độ pH Đầu Vào Hệ STRO</div>
       <div class="value">
-        <span id="pHS031">--</span>
+        <span id="pHS131">--</span>
         <span class="unit"> </span>
       </div>
     </div>
@@ -202,7 +202,7 @@
             document.getElementById("pHS011").textContent = d.pHS011/10 ?? "--";
             document.getElementById("Udc").textContent    = d.Udc/10 ?? "--"; // Nếu JSON không có Udc sẽ hiện --
             document.getElementById("Idc").textContent    = d.Idc/10 ?? "--";
-            document.getElementById("pHS031").textContent = d.pHS131/10 ?? "--"; // Map tạm pHS131 vào pHS031
+            document.getElementById("pHS131").textContent = d.pHS131/10 ?? "--"; // Map tạm pHS131 vào pHS031
             
             document.getElementById("PT131").textContent  = parseVal(d.PT131/10, 2);
             document.getElementById("PT141").textContent  = parseVal(d.PT141/10, 2);
