@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>SCADA Web</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #111827;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    .label {
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .value {
+      font-size: 36px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .unit {
+      font-size: 16px;
+      color: #9ca3af;
+      margin-left: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>HOMNREEN WEB MONITOR</h1>
+
+
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="label">Nồng độ pH Tiền Xử Lý</div>
+      <div class="value">
+        <span id="pHS011">--</span>
+        <span class="unit"> </span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Điện áp Output Hệ ECR</div>
+      <div class="value">
+        <span id="Udc">--</span>
+        <span class="unit">Vdc</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Dòng điện Output Hệ ECR</div>
+      <div class="value">
+        <span id="Idc">--</span>
+        <span class="unit">A</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Nồng độ pH Đầu Vào Hệ STRO</div>
+      <div class="value">
+        <span id="pHS031">--</span>
+        <span class="unit"> </span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Áp suất trước Lọc Thô</div>
+      <div class="value">
+        <span id="PT131">--</span>
+        <span class="unit">bar</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Áp suất sau Lọc Thô</div>
+      <div class="value">
+        <span id="PT141">--</span>
+        <span class="unit">bar</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Lưu lượng sau Lọc Tinh</div>
+      <div class="value">
+        <span id="FT151">--</span>
+        <span class="unit">L/H</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Áp suất sau Lọc Tinh</div>
+      <div class="value">
+        <span id="PT151">--</span>
+        <span class="unit">bar</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Độ dẫn điện Trước Màng STRO </div>
+      <div class="value">
+        <span id="CIS151">--</span>
+        <span class="unit">uS/Cm</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Áp suất sau Bơm Cao Áp</div>
+      <div class="value">
+        <span id="PT1601">--</span>
+        <span class="unit">bar</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Áp suất sau Màng STRO</div>
+      <div class="value">
+        <span id="PT1602">--</span>
+        <span class="unit">bar</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Độ cứng Sau Màng STRO</div>
+      <div class="value">
+        <span id="CIS180">--</span>
+        <span class="unit">uS/Cm</span>
+      </div>
+    </div>
+
+        <div class="card">
+      <div class="label">Lưu lượng Thu Hồi Sau Màng STRO</div>
+      <div class="value">
+        <span id="FT180">--</span>
+        <span class="unit">L/H</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">Năng lượng điện Tiêu Thụ</div>
+      <div class="value">
+        <span id="KWH">--</span>
+        <span class="unit">kWh</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Last update: <span id="time">--</span>
+  </div>
+
+  <script>
+    async function fetchData() {
+        try {
+            const res = await fetch("https://web-scada.webnewbiemc.io.vn/api/data?t=" + Date.now());
+            if (!res.ok) throw new Error(res.status);
+
+            const d = await res.json();
+            console.log("Dữ liệu nhận được:", d); // Kiểm tra trong Console F12
+
+            // Hàm hỗ trợ để ép kiểu số và làm tròn an toàn
+            const parseVal = (val, decimal = 1) => {
+                const num = parseFloat(val);
+                return isNaN(num) ? "--" : num.toFixed(decimal);
+            };
+
+            // Cập nhật giao diện khớp với các ID trong HTML và Key trong JSON
+            document.getElementById("pHS011").textContent = d.pHS011/10 ?? "--";
+            document.getElementById("Udc").textContent    = d.Udc/10 ?? "--"; // Nếu JSON không có Udc sẽ hiện --
+            document.getElementById("Idc").textContent    = d.Idc/10 ?? "--";
+            document.getElementById("pHS031").textContent = d.pHS131/10 ?? "--"; // Map tạm pHS131 vào pHS031
+            
+            document.getElementById("PT131").textContent  = parseVal(d.PT131/10, 2);
+            document.getElementById("PT141").textContent  = parseVal(d.PT141/10, 2);
+            document.getElementById("FT151").textContent  = parseVal(d.FT151/10, 0);
+            document.getElementById("PT151").textContent  = parseVal(d.PT151/10, 2);
+            
+            document.getElementById("CIS151").textContent = d.CIS151 ?? "--";
+            document.getElementById("PT1601").textContent = parseVal(d.PT1601/10, 2);
+            document.getElementById("PT1602").textContent = parseVal(d.PT1602/10, 2);
+            document.getElementById("CIS180").textContent = d.CIS180 ?? "--";
+            document.getElementById("FT180").textContent  = parseVal(d.FT180/10, 0);
+            document.getElementById("KWH").textContent    = d.KWH ?? "--";
+
+            // Hiển thị thời gian cập nhật
+            document.getElementById("time").textContent = d.ts ? new Date(d.ts).toLocaleTimeString() : new Date().toLocaleTimeString();
+
+        } catch (e) {
+            console.error("API error:", e);
+            document.getElementById("time").textContent = "OFFLINE";
+        }
+    }
+
+    // Chạy ngay lập tức và lặp lại mỗi giây
+    fetchData();
+    setInterval(fetchData, 1000);
+</script>
+
+</body>
+</html>
