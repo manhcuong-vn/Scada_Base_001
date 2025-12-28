@@ -102,7 +102,7 @@
   <script>
     async function fetchData() {
         try {
-        const res = await fetch("https://node1.webnewbiemc.io.vn/api/data");
+        const res = await fetch("https://web-scada.webnewbiemc.io.vn/");
         if (!res.ok) throw new Error(res.status);
 
         const d = await res.json();
